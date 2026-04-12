@@ -115,14 +115,26 @@
   </main>
 
   <!-- JavaScript -->
-  <script src="js/app.js"></script>
+  <script src="js/app-backend.js"></script>
   <script>
     // Update category page stats
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', async () => {
       const catTotal = document.getElementById('catTotalCount');
       const catNotice = document.getElementById('catNoticeCount');
-      if (catTotal) catTotal.textContent = DataStore.categories.length;
-      if (catNotice) catNotice.textContent = DataStore.notices.length;
+      
+      try {
+        const catResponse = await apiCall('/categories');
+        const noticeResponse = await apiCall('/notices');
+        
+        if (catTotal && catResponse.status === 'SUCCESS') {
+          catTotal.textContent = catResponse.data.length;
+        }
+        if (catNotice && noticeResponse.status === 'SUCCESS') {
+          catNotice.textContent = noticeResponse.data.length;
+        }
+      } catch (error) {
+        console.error('Failed to load stats:', error);
+      }
     });
   </script>
 </body>
