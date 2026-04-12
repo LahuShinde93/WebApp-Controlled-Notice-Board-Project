@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Testing Tool</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .test-section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+        }
+        
+        .test-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin-right: 10px;
+        }
+        
+        button:hover {
+            background: #5568d3;
+        }
+        
+        button.danger {
+            background: #dc3545;
+        }
+        
+        button.danger:hover {
+            background: #c82333;
+        }
+        
+        .response {
+            margin-top: 15px;
+            padding: 15px;
+            background: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .response pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+        }
+        
+        .success {
+            border-left: 4px solid #28a745;
+        }
+        
+        .error {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+        
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        @media (max-width: 768px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 Backend API Testing Tool</h1>
+        <p class="subtitle">Test your Notice Board APIs directly from the browser</p>
+        
+        <!-- Authentication Tests -->
+        <div class="test-section">
+            <h2>🔐 Authentication APIs</h2>
+            
+            <div class="grid">
+                <div class="test-group">
+                    <label>Name:</label>
+                    <input type="text" id="regName" value="Test User">
+                </div>
+                <div class="test-group">
+                    <label>Email:</label>
+                    <input type="email" id="regEmail" value="test@example.com">
+                </div>
+            </div>
+            
+            <div class="test-group">
+                <label>Password:</label>
+                <input type="password" id="regPassword" value="password123">
+            </div>
+            
+            <button onclick="testRegister()">Register User</button>
+            <button onclick="testLogin()">Login User</button>
+            
+            <div id="authResponse" class="response" style="display:none;"></div>
+        </div>
+        
+        <!-- Category Tests -->
+        <div class="test-section">
+            <h2>📁 Category APIs</h2>
+            
+            <div class="test-group">
+                <label>Category Name:</label>
+                <input type="text" id="catName" value="Academic">
+            </div>
+            
+            <button onclick="testCreateCategory()">Create Category</button>
+            <button onclick="testGetCategories()">Get All Categories</button>
+            <button onclick="createDefaultCategories()">Create Default Categories</button>
+            
+            <div id="categoryResponse" class="response" style="display:none;"></div>
+        </div>
+        
+        <!-- Notice Tests -->
+        <div class="test-section">
+            <h2>📢 Notice APIs</h2>
+            
+            <div class="test-group">
+                <label>Title:</label>
+                <input type="text" id="noticeTitle" value="Test Notice">
+            </div>
+            
+            <div class="test-group">
+                <label>Description:</label>
+                <textarea id="noticeDesc">This is a test notice description for testing purposes.</textarea>
+            </div>
+            
+            <div class="grid">
+                <div class="test-group">
+                    <label>Category:</label>
+                    <input type="text" id="noticeCategory" value="Academic">
+                </div>
+                <div class="test-group">
+                    <label>Priority:</label>
+                    <select id="noticePriority">
+                        <option value="HIGH">High</option>
+                        <option value="MEDIUM">Medium</option>
+                        <option value="LOW">Low</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div class="grid">
+                <div class="test-group">
+                    <label>Status:</label>
+                    <select id="noticeStatus">
+                        <option value="ACTIVE">Active</option>
+                        <option value="INACTIVE">Inactive</option>
+                        <option value="DRAFT">Draft</option>
+                    </select>
+                </div>
+                <div class="test-group">
+                    <label>Expiry Date:</label>
+                    <input type="date" id="noticeExpiry" value="2026-12-31">
+                </div>
+            </div>
+            
+            <button onclick="testCreateNotice()">Create Notice</button>
+            <button onclick="testGetNotices()">Get All Notices</button>
+            <button onclick="testGetActiveNotices()">Get Active Notices</button>
+            
+            <div id="noticeResponse" class="response" style="display:none;"></div>
+        </div>
+        
+        <!-- Dashboard Tests -->
+        <div class="test-section">
+            <h2>📊 Dashboard APIs</h2>
+            
+            <button onclick="testDashboardStats()">Get Dashboard Stats</button>
+            
+            <div id="dashboardResponse" class="response" style="display:none;"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_BASE = 'http://localhost:8080/api';
+        
+        async function apiCall(endpoint, method = 'GET', body = null) {
+            const options = {
+                method,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            };
+            
+            if (body) {
+                options.body = JSON.stringify(body);
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}${endpoint}`, options);
+                const data = await response.json();
+                return { success: response.ok, status: response.status, data };
+            } catch (error) {
+                return { success: false, error: error.message };
+            }
+        }
+        
+        function displayResponse(elementId, result) {
+            const el = document.getElementById(elementId);
+            el.style.display = 'block';
+            
+            if (result.success) {
+                el.className = 'response success';
+                el.innerHTML = `
+                    <span class="status success">✓ Success (${result.status})</span>
+                    <pre>${JSON.stringify(result.data, null, 2)}</pre>
+                `;
+            } else {
+                el.className = 'response error';
+                el.innerHTML = `
+                    <span class="status error">✗ Error ${result.status ? '(' + result.status + ')' : ''}</span>
+                    <pre>${result.error || JSON.stringify(result.data, null, 2)}</pre>
+                `;
+            }
+        }
+        
+        // Authentication Tests
+        async function testRegister() {
+            const result = await apiCall('/auth/register', 'POST', {
+                name: document.getElementById('regName').value,
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value
+            });
+            displayResponse('authResponse', result);
+        }
+        
+        async function testLogin() {
+            const result = await apiCall('/auth/login', 'POST', {
+                email: document.getElementById('regEmail').value,
+                password: document.getElementById('regPassword').value
+            });
+            displayResponse('authResponse', result);
+        }
+        
+        // Category Tests
+        async function testCreateCategory() {
+            const result = await apiCall('/categories', 'POST', {
+                name: document.getElementById('catName').value,
+                icon: 'fas fa-folder'
+            });
+            displayResponse('categoryResponse', result);
+        }
+        
+        async function testGetCategories() {
+            const result = await apiCall('/categories');
+            displayResponse('categoryResponse', result);
+        }
+        
+        // Notice Tests
+        async function testCreateNotice() {
+            const result = await apiCall('/notices', 'POST', {
+                title: document.getElementById('noticeTitle').value,
+                description: document.getElementById('noticeDesc').value,
+                category: document.getElementById('noticeCategory').value,
+                priority: document.getElementById('noticePriority').value,
+                status: document.getElementById('noticeStatus').value,
+                expiryDate: document.getElementById('noticeExpiry').value
+            });
+            displayResponse('noticeResponse', result);
+        }
+        
+        async function testGetNotices() {
+            const result = await apiCall('/notices');
+            displayResponse('noticeResponse', result);
+        }
+        
+        async function testGetActiveNotices() {
+            const result = await apiCall('/notices/active');
+            displayResponse('noticeResponse', result);
+        }
+        
+        // Dashboard Tests
+        async function testDashboardStats() {
+            const result = await apiCall('/dashboard/stats');
+            displayResponse('dashboardResponse', result);
+        }
+        
+        // Create default categories
+        async function createDefaultCategories() {
+            const categories = [
+                { name: 'Academic', icon: 'fas fa-graduation-cap' },
+                { name: 'General', icon: 'fas fa-bullhorn' },
+                { name: 'Events', icon: 'fas fa-calendar-alt' },
+                { name: 'Administrative', icon: 'fas fa-building' },
+                { name: 'Urgent', icon: 'fas fa-exclamation-triangle' }
+            ];
+            
+            let created = 0;
+            let errors = 0;
+            
+            for (const cat of categories) {
+                try {
+                    const result = await apiCall('/categories', 'POST', cat);
+                    if (result.success) created++;
+                } catch (error) {
+                    errors++;
+                }
+            }
+            
+            const el = document.getElementById('categoryResponse');
+            el.style.display = 'block';
+            el.className = 'response success';
+            el.innerHTML = `
+                <span class="status success">✓ Completed</span>
+                <pre>Created ${created} categories${errors > 0 ? `, ${errors} already existed` : ''}</pre>
+            `;
+            
+            // Refresh the list
+            setTimeout(() => testGetCategories(), 500);
+        }
+    </script>
+</body>
+</html>
