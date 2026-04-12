@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Manage all notices on Smart Notice Board">
+  <title>Manage Notices — Smart Notice Board</title>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <!-- Custom CSS -->
+  <link rel="stylesheet" href="css/styles.css">
+  <style>
+    /* ── Filter Row ── */
+    .filter-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+    .filter-row .filter-left {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .filter-row .filter-left span {
+      font-size: 0.9rem;
+      color: var(--gray-600);
+      font-weight: 500;
+    }
+    .filter-row select {
+      padding: 8px 14px;
+      border: 2px solid var(--gray-200);
+      border-radius: var(--border-radius-sm);
+      font-size: 0.85rem;
+      color: var(--gray-700);
+      background: #fff;
+      transition: var(--transition);
+      min-width: 140px;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2394a3b8' d='M6 8.825L.35 3.175l.7-.7L6 7.425l4.95-4.95.7.7z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 34px;
+    }
+    .filter-row select:focus {
+      border-color: var(--primary-400);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+    .filter-row .search-box input {
+      min-width: 220px;
+    }
+
+    /* ── Pagination ── */
+    .table-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      border-top: 1px solid var(--gray-200);
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .table-footer .showing-text {
+      font-size: 0.85rem;
+      color: var(--gray-500);
+    }
+    .pagination {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .pagination button {
+      padding: 6px 12px;
+      border: 1px solid var(--gray-200);
+      background: #fff;
+      border-radius: 6px;
+      font-size: 0.82rem;
+      color: var(--gray-600);
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+    .pagination button:hover {
+      background: var(--primary-50);
+      border-color: var(--primary-300);
+      color: var(--primary-700);
+    }
+    .pagination button.active {
+      background: var(--primary-600);
+      color: #fff;
+      border-color: var(--primary-600);
+    }
+    .pagination button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    /* ── Sortable header ── */
+    .data-table thead th.sortable {
+      cursor: pointer;
+      user-select: none;
+    }
+    .data-table thead th.sortable:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    .data-table thead th .sort-icon {
+      margin-left: 6px;
+      font-size: 0.7rem;
+      opacity: 0.6;
+    }
+
+    @media (max-width: 768px) {
+      .filter-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .filter-row .filter-left {
+        flex-direction: column;
+      }
+      .filter-row select {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── TOP NAVBAR ─── -->
+  <nav class="navbar" id="topNavbar">
+    <div class="navbar-brand">
+      <button class="menu-toggle" aria-label="Toggle Menu">
+        <i class="fas fa-bars"></i>
+      </button>
+      <div class="brand-icon">
+        <i class="fas fa-clipboard-list"></i>
+      </div>
+      <h1>SMART <span>NOTICE BOARD</span></h1>
+    </div>
+    <div class="navbar-right">
+      <span class="navbar-welcome">Welcome, <strong>Admin</strong> <i class="fas fa-caret-down"></i></span>
+      <div class="navbar-profile">
+        <div class="profile-avatar" title="Admin">A</div>
+        <button class="btn-logout" onclick="logout()" id="logoutBtn">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Logout</span>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ─── LEFT SIDEBAR ─── -->
+  <aside class="sidebar" id="sidebar">
+    <nav class="sidebar-nav">
+      <a href="index.html" class="sidebar-link" id="navDashboard">
+        <i class="fas fa-home"></i> Dashboard
+      </a>
+      <a href="create-notice.html" class="sidebar-link" id="navCreateNotice">
+        <i class="fas fa-plus-square"></i> Create Notice
+      </a>
+      <a href="manage-notices.html" class="sidebar-link active" id="navManageNotices">
+        <i class="fas fa-th-list"></i> Manage Notices
+      </a>
+      <a href="categories.html" class="sidebar-link" id="navCategories">
+        <i class="fas fa-folder"></i> Categories
+      </a>
+      <div class="sidebar-divider"></div>
+      <a href="#" class="sidebar-link" id="navSettings">
+        <i class="fas fa-cog"></i> Settings
+      </a>
+    </nav>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <!-- ─── MAIN CONTENT ─── -->
+  <main class="main-content">
+
+    <!-- Page Header + Add Button -->
+    <div class="toolbar fade-in" style="margin-bottom:16px;">
+      <div class="page-header" style="margin-bottom:0;">
+        <h2><i class="fas fa-th-list" style="color:var(--primary-500);margin-right:10px;"></i>Manage Notices</h2>
+      </div>
+      <a href="create-notice.html" class="btn btn-success" id="addNewNoticeBtn">
+        <i class="fas fa-plus"></i> Add Category
+      </a>
+    </div>
+
+    <!-- Filter Row -->
+    <div class="filter-row fade-in">
+      <div class="filter-left">
+        <span id="entryCount">There are 8 entries</span>
+        <select id="filterCategory" onchange="applyFilters()">
+          <option value="">Category ▾</option>
+        </select>
+        <select id="filterPriority" onchange="applyFilters()">
+          <option value="">Priority ▾</option>
+          <option value="High">High</option>
+          <option value="Medium">Medium</option>
+          <option value="Low">Low</option>
+        </select>
+        <select id="filterStatus" onchange="applyFilters()">
+          <option value="">Status ▾</option>
+          <option value="Active">Active</option>
+          <option value="Expired">Expired</option>
+          <option value="Draft">Draft</option>
+        </select>
+      </div>
+      <div class="search-box">
+        <i class="fas fa-search"></i>
+        <input type="text" id="searchNotices" placeholder="Search Notices..." oninput="applyFilters()">
+      </div>
+    </div>
+
+    <!-- Notices Table Card -->
+    <div class="card fade-in">
+      <div class="card-body" style="padding:0;">
+        <div class="table-container">
+          <table class="data-table" id="noticesTable">
+            <thead>
+              <tr>
+                <th class="sortable" onclick="sortTable('title')">Title <i class="fas fa-sort sort-icon"></i></th>
+                <th class="sortable" onclick="sortTable('category')">Category <i class="fas fa-sort sort-icon"></i></th>
+                <th class="sortable" onclick="sortTable('priority')">Priority <i class="fas fa-sort sort-icon"></i></th>
+                <th class="sortable" onclick="sortTable('date')">Expiry Date <i class="fas fa-sort sort-icon"></i></th>
+                <th class="sortable" onclick="sortTable('status')">Status <i class="fas fa-sort sort-icon"></i></th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="noticesTableBody">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+        <!-- Pagination Footer -->
+        <div class="table-footer">
+          <span class="showing-text" id="showingText">Showing 1 to 8 of 8 entries</span>
+          <div class="pagination" id="pagination">
+            <button disabled>&laquo;</button>
+            <button class="active">1</button>
+            <button>Next &rsaquo;</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- ─── EDIT NOTICE MODAL ─── -->
+  <div class="modal-overlay" id="editModal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3><i class="fas fa-pen" style="color:var(--primary-500);margin-right:8px;"></i>Edit Notice</h3>
+        <button class="modal-close" onclick="closeEditModal()" id="closeModalBtn">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <form id="editNoticeForm">
+        <input type="hidden" id="editNoticeId">
+
+        <div class="form-group">
+          <label for="editNoticeTitle"><i class="fas fa-heading"></i> Title</label>
+          <input type="text" id="editNoticeTitle" class="form-control" required>
+        </div>
+
+        <div class="form-group">
+          <label for="editNoticeDescription"><i class="fas fa-align-left"></i> Description</label>
+          <textarea id="editNoticeDescription" class="form-control" required></textarea>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="editNoticeCategory"><i class="fas fa-folder"></i> Category</label>
+            <select id="editNoticeCategory" class="form-control" required>
+              <option value="">Select Category</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="editNoticePriority"><i class="fas fa-flag"></i> Priority</label>
+            <select id="editNoticePriority" class="form-control" required>
+              <option value="High">High</option>
+              <option value="Medium">Medium</option>
+              <option value="Low">Low</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="editNoticeStatus"><i class="fas fa-toggle-on"></i> Status</label>
+          <select id="editNoticeStatus" class="form-control" required>
+            <option value="Active">Active</option>
+            <option value="Draft">Draft</option>
+            <option value="Expired">Expired</option>
+          </select>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline" onclick="closeEditModal()" id="cancelEditBtn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="saveEditBtn">
+            <i class="fas fa-save"></i> Save Changes
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JavaScript -->
+  <script src="js/app.js"></script>
+  <script>
+    // ── Populate filter dropdowns ──
+    document.addEventListener('DOMContentLoaded', () => {
+      const filterCat = document.getElementById('filterCategory');
+      if (filterCat) {
+        DataStore.categories.forEach(cat => {
+          const opt = document.createElement('option');
+          opt.value = cat.name;
+          opt.textContent = cat.name;
+          filterCat.appendChild(opt);
+        });
+      }
+      updateEntryCount();
+    });
+
+    function updateEntryCount() {
+      const el = document.getElementById('entryCount');
+      const body = document.getElementById('noticesTableBody');
+      if (el && body) {
+        const count = body.querySelectorAll('tr').length;
+        el.textContent = `There are ${count} entries`;
+        const showEl = document.getElementById('showingText');
+        if (showEl) showEl.textContent = `Showing 1 to ${count} of ${count} entries`;
+      }
+    }
+
+    // ── Combined filter function ──
+    function applyFilters() {
+      const search   = (document.getElementById('searchNotices').value || '').toLowerCase();
+      const catFilter = document.getElementById('filterCategory').value;
+      const priFilter = document.getElementById('filterPriority').value;
+      const staFilter = document.getElementById('filterStatus').value;
+
+      const tableBody = document.getElementById('noticesTableBody');
+      if (!tableBody) return;
+
+      let notices = DataStore.notices;
+
+      if (search) {
+        notices = notices.filter(n =>
+          n.title.toLowerCase().includes(search) ||
+          n.category.toLowerCase().includes(search)
+        );
+      }
+      if (catFilter) notices = notices.filter(n => n.category === catFilter);
+      if (priFilter) notices = notices.filter(n => n.priority === priFilter);
+      if (staFilter) notices = notices.filter(n => n.status === staFilter);
+
+      if (notices.length === 0) {
+        tableBody.innerHTML = `
+          <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--gray-400);">
+            <i class="fas fa-inbox" style="font-size:2rem;display:block;margin-bottom:10px;"></i>
+            No notices found
+          </td></tr>`;
+      } else {
+        tableBody.innerHTML = notices.map(n => `
+          <tr>
+            <td><strong>${n.title}</strong></td>
+            <td>${n.category}</td>
+            <td><span class="badge badge-${n.priority.toLowerCase()}">${n.priority}</span></td>
+            <td>${n.date}</td>
+            <td><span class="badge badge-${n.status.toLowerCase()}">${n.status}</span></td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-icon edit" onclick="editNotice(${n.id})" title="Edit"><i class="fas fa-pen"></i></button>
+                <button class="btn-icon delete" onclick="deleteNotice(${n.id})" title="Delete"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+      }
+
+      // Update counts
+      const el = document.getElementById('entryCount');
+      if (el) el.textContent = `There are ${notices.length} entries`;
+      const showEl = document.getElementById('showingText');
+      if (showEl) showEl.textContent = `Showing 1 to ${notices.length} of ${notices.length} entries`;
+    }
+
+    // ── Sort ──
+    let currentSort = { field: '', asc: true };
+    function sortTable(field) {
+      if (currentSort.field === field) {
+        currentSort.asc = !currentSort.asc;
+      } else {
+        currentSort.field = field;
+        currentSort.asc = true;
+      }
+      DataStore.notices.sort((a, b) => {
+        const valA = (a[field] || '').toLowerCase();
+        const valB = (b[field] || '').toLowerCase();
+        if (valA < valB) return currentSort.asc ? -1 : 1;
+        if (valA > valB) return currentSort.asc ? 1 : -1;
+        return 0;
+      });
+      applyFilters();
+    }
+  </script>
+</body>
+</html>
