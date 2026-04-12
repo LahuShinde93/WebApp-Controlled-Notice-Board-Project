@@ -277,17 +277,27 @@ async function initCreateNotice() {
   const catSelect = document.getElementById('noticeCategory');
   if (catSelect) {
     try {
+      console.log('Loading categories for dropdown...');
       const response = await apiCall('/categories');
+      console.log('Categories response:', response);
+      
       if (response.status === 'SUCCESS') {
-        response.data.forEach(cat => {
-          const opt = document.createElement('option');
-          opt.value = cat.name;
-          opt.textContent = cat.name;
-          catSelect.appendChild(opt);
-        });
+        if (response.data && response.data.length > 0) {
+          response.data.forEach(cat => {
+            const opt = document.createElement('option');
+            opt.value = cat.name;
+            opt.textContent = cat.name;
+            catSelect.appendChild(opt);
+          });
+          console.log(`Loaded ${response.data.length} categories`);
+        } else {
+          console.warn('No categories found. Please create categories first.');
+          showToast('No categories found. Please create categories first.', 'info');
+        }
       }
     } catch (error) {
       console.error('Failed to load categories:', error);
+      showToast('Failed to load categories. Please check if backend is running.', 'error');
     }
   }
 

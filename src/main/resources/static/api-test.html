@@ -201,6 +201,7 @@
             
             <button onclick="testCreateCategory()">Create Category</button>
             <button onclick="testGetCategories()">Get All Categories</button>
+            <button onclick="createDefaultCategories()">Create Default Categories</button>
             
             <div id="categoryResponse" class="response" style="display:none;"></div>
         </div>
@@ -368,6 +369,40 @@
         async function testDashboardStats() {
             const result = await apiCall('/dashboard/stats');
             displayResponse('dashboardResponse', result);
+        }
+        
+        // Create default categories
+        async function createDefaultCategories() {
+            const categories = [
+                { name: 'Academic', icon: 'fas fa-graduation-cap' },
+                { name: 'General', icon: 'fas fa-bullhorn' },
+                { name: 'Events', icon: 'fas fa-calendar-alt' },
+                { name: 'Administrative', icon: 'fas fa-building' },
+                { name: 'Urgent', icon: 'fas fa-exclamation-triangle' }
+            ];
+            
+            let created = 0;
+            let errors = 0;
+            
+            for (const cat of categories) {
+                try {
+                    const result = await apiCall('/categories', 'POST', cat);
+                    if (result.success) created++;
+                } catch (error) {
+                    errors++;
+                }
+            }
+            
+            const el = document.getElementById('categoryResponse');
+            el.style.display = 'block';
+            el.className = 'response success';
+            el.innerHTML = `
+                <span class="status success">✓ Completed</span>
+                <pre>Created ${created} categories${errors > 0 ? `, ${errors} already existed` : ''}</pre>
+            `;
+            
+            // Refresh the list
+            setTimeout(() => testGetCategories(), 500);
         }
     </script>
 </body>
