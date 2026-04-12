@@ -5,8 +5,8 @@ import com.noticeboard.dto.response.ApiResponse;
 import com.noticeboard.model.Category;
 import com.noticeboard.service.CategoryService;
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,17 +15,20 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
-@RequiredArgsConstructor
-@Slf4j
 @CrossOrigin(origins = "*")
 public class CategoryController {
     
+    private static final Logger log = LoggerFactory.getLogger(CategoryController.class);
+    
     private final CategoryService categoryService;
+    
+    public CategoryController(CategoryService categoryService) {
+        this.categoryService = categoryService;
+    }
     
     /**
      * Create a new category
      * POST /api/categories
-     * Headers: Authorization: Bearer <token>
      * Request Body: { "name": "Academic", "icon": "fas fa-graduation-cap" }
      * Response: { "status": "SUCCESS", "message": "Category created successfully", "data": {...} }
      */
@@ -65,7 +68,6 @@ public class CategoryController {
     /**
      * Update a category
      * PUT /api/categories/{id}
-     * Headers: Authorization: Bearer <token>
      * Request Body: { "name": "Updated Name", "icon": "fas fa-folder" }
      * Response: { "status": "SUCCESS", "message": "Category updated successfully", "data": {...} }
      */
@@ -81,7 +83,6 @@ public class CategoryController {
     /**
      * Delete a category
      * DELETE /api/categories/{id}
-     * Headers: Authorization: Bearer <token>
      * Response: { "status": "SUCCESS", "message": "Category deleted successfully", "data": null }
      */
     @DeleteMapping("/{id}")

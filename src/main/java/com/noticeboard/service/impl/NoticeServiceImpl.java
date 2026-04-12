@@ -7,8 +7,8 @@ import com.noticeboard.exception.ResourceNotFoundException;
 import com.noticeboard.model.Category;
 import com.noticeboard.model.Notice;
 import com.noticeboard.service.NoticeService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -16,12 +16,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class NoticeServiceImpl implements NoticeService {
+    
+    private static final Logger log = LoggerFactory.getLogger(NoticeServiceImpl.class);
     
     private final NoticeDao noticeDao;
     private final CategoryDao categoryDao;
+    
+    public NoticeServiceImpl(NoticeDao noticeDao, CategoryDao categoryDao) {
+        this.noticeDao = noticeDao;
+        this.categoryDao = categoryDao;
+    }
     
     @Override
     public Notice createNotice(NoticeRequest request) {

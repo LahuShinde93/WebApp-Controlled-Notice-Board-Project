@@ -3,16 +3,18 @@ package com.noticeboard.dao.impl;
 import com.noticeboard.dao.UserDao;
 import com.noticeboard.model.User;
 import com.noticeboard.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
 public class UserDaoImpl implements UserDao {
     
     private final UserRepository userRepository;
+    
+    public UserDaoImpl(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
     
     @Override
     public User save(User user) {

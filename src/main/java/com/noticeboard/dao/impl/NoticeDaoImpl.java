@@ -3,17 +3,19 @@ package com.noticeboard.dao.impl;
 import com.noticeboard.dao.NoticeDao;
 import com.noticeboard.model.Notice;
 import com.noticeboard.repository.NoticeRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
 public class NoticeDaoImpl implements NoticeDao {
     
     private final NoticeRepository noticeRepository;
+    
+    public NoticeDaoImpl(NoticeRepository noticeRepository) {
+        this.noticeRepository = noticeRepository;
+    }
     
     @Override
     public Notice save(Notice notice) {

@@ -3,17 +3,19 @@ package com.noticeboard.dao.impl;
 import com.noticeboard.dao.CategoryDao;
 import com.noticeboard.model.Category;
 import com.noticeboard.repository.CategoryRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
 
 @Component
-@RequiredArgsConstructor
 public class CategoryDaoImpl implements CategoryDao {
     
     private final CategoryRepository categoryRepository;
+    
+    public CategoryDaoImpl(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
     
     @Override
     public Category save(Category category) {

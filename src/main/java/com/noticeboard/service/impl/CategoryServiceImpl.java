@@ -6,19 +6,23 @@ import com.noticeboard.exception.ResourceAlreadyExistsException;
 import com.noticeboard.exception.ResourceNotFoundException;
 import com.noticeboard.model.Category;
 import com.noticeboard.service.CategoryService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class CategoryServiceImpl implements CategoryService {
     
+    private static final Logger log = LoggerFactory.getLogger(CategoryServiceImpl.class);
+    
     private final CategoryDao categoryDao;
+    
+    public CategoryServiceImpl(CategoryDao categoryDao) {
+        this.categoryDao = categoryDao;
+    }
     
     @Override
     public Category createCategory(CategoryRequest request) {

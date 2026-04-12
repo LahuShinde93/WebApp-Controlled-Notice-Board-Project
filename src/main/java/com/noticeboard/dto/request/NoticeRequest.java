@@ -1,17 +1,10 @@
 package com.noticeboard.dto.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class NoticeRequest {
     
     @NotBlank(message = "Title is required")
@@ -32,4 +25,64 @@ public class NoticeRequest {
     private String status;
     
     private LocalDate expiryDate;
+    
+    public NoticeRequest() {
+    }
+    
+    public NoticeRequest(String title, String description, String category, String priority, String status, LocalDate expiryDate) {
+        this.title = title;
+        this.description = description;
+        this.category = category;
+        this.priority = priority;
+        this.status = status;
+        this.expiryDate = expiryDate;
+    }
+    
+    public String getTitle() {
+        return title;
+    }
+    
+    public void setTitle(String title) {
+        this.title = title;
+    }
+    
+    public String getDescription() {
+        return description;
+    }
+    
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    
+    public String getCategory() {
+        return category;
+    }
+    
+    public void setCategory(String category) {
+        this.category = category;
+    }
+    
+    public String getPriority() {
+        return priority;
+    }
+    
+    public void setPriority(String priority) {
+        this.priority = priority;
+    }
+    
+    public String getStatus() {
+        return status;
+    }
+    
+    public void setStatus(String status) {
+        this.status = status;
+    }
+    
+    public LocalDate getExpiryDate() {
+        return expiryDate;
+    }
+    
+    public void setExpiryDate(LocalDate expiryDate) {
+        this.expiryDate = expiryDate;
+    }
 }

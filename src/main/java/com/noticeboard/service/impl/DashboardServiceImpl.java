@@ -4,17 +4,22 @@ import com.noticeboard.dao.CategoryDao;
 import com.noticeboard.dao.NoticeDao;
 import com.noticeboard.dto.response.DashboardResponse;
 import com.noticeboard.service.DashboardService;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-@RequiredArgsConstructor
-@Slf4j
 public class DashboardServiceImpl implements DashboardService {
+    
+    private static final Logger log = LoggerFactory.getLogger(DashboardServiceImpl.class);
     
     private final NoticeDao noticeDao;
     private final CategoryDao categoryDao;
+    
+    public DashboardServiceImpl(NoticeDao noticeDao, CategoryDao categoryDao) {
+        this.noticeDao = noticeDao;
+        this.categoryDao = categoryDao;
+    }
     
     @Override
     public DashboardResponse getDashboardStats() {
