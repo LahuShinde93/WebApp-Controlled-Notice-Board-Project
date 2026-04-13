@@ -208,7 +208,7 @@ function initRegisterPage() {
       return;
     }
 
-    showToast('Registration successful! Redirecting to login...', 'success');
+    showToast('Registration successful! Please login to continue.', 'success');
     setTimeout(() => window.location.href = 'login.html', 1500);
   });
 }

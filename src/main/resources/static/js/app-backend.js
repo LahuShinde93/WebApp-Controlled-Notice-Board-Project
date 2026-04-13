@@ -201,9 +201,8 @@ function initRegisterPage() {
     try {
       const response = await apiCall('/auth/register', 'POST', { name, email, password });
       if (response.status === 'SUCCESS') {
-        localStorage.setItem('user', JSON.stringify(response.data));
-        showToast('Registration successful! Redirecting...', 'success');
-        setTimeout(() => window.location.href = 'index.html', 1000);
+        showToast('Registration successful! Please login to continue.', 'success');
+        setTimeout(() => window.location.href = 'login.html', 1500);
       }
     } catch (error) {
       // Error already shown by apiCall
@@ -655,7 +654,7 @@ function logout() {
     onConfirm: () => {
       localStorage.removeItem('user');
       showToast('Logging out...', 'info');
-      setTimeout(() => window.location.href = 'auth.html', 800);
+      setTimeout(() => window.location.href = 'login.html', 800);
     }
   });
 }
