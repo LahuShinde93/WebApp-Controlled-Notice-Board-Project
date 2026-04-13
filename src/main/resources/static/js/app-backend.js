@@ -163,7 +163,7 @@ function initLoginPage() {
       if (response.status === 'SUCCESS') {
         localStorage.setItem('user', JSON.stringify(response.data));
         showToast('Login successful! Redirecting...', 'success');
-        setTimeout(() => window.location.href = 'index.html', 1200);
+        setTimeout(() => window.location.href = 'index.html', 1000);
       }
     } catch (error) {
       showToast('Invalid email or password.', 'error');
@@ -201,8 +201,9 @@ function initRegisterPage() {
     try {
       const response = await apiCall('/auth/register', 'POST', { name, email, password });
       if (response.status === 'SUCCESS') {
-        showToast('Registration successful! Redirecting to login...', 'success');
-        setTimeout(() => window.location.href = 'login.html', 1500);
+        localStorage.setItem('user', JSON.stringify(response.data));
+        showToast('Registration successful! Redirecting...', 'success');
+        setTimeout(() => window.location.href = 'index.html', 1000);
       }
     } catch (error) {
       // Error already shown by apiCall
@@ -654,7 +655,7 @@ function logout() {
     onConfirm: () => {
       localStorage.removeItem('user');
       showToast('Logging out...', 'info');
-      setTimeout(() => window.location.href = 'login.html', 1000);
+      setTimeout(() => window.location.href = 'auth.html', 800);
     }
   });
 }
