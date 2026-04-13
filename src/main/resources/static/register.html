@@ -99,6 +99,20 @@
       color: var(--gray-400);
       font-size: 0.9rem;
     }
+
+    .auth-panel .input-wrapper .toggle-password {
+      position: absolute;
+      right: 14px;
+      top: 42px;
+      color: var(--gray-500);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .auth-panel .input-wrapper .toggle-password:hover {
+      color: var(--primary-600);
+    }
     
     .auth-panel .btn-primary {
       width: 100%;
@@ -174,13 +188,13 @@
         <div class="input-wrapper">
           <label for="regPassword">Password</label>
           <input type="password" id="regPassword" placeholder="Create a password" required minlength="6">
-          <i class="fas fa-lock field-icon"></i>
+          <i class="fas fa-eye toggle-password" id="toggleRegPassword"></i>
         </div>
 
         <div class="input-wrapper">
           <label for="regConfirm">Confirm Password</label>
           <input type="password" id="regConfirm" placeholder="Confirm your password" required>
-          <i class="fas fa-shield-alt field-icon"></i>
+          <i class="fas fa-eye toggle-password" id="toggleRegConfirm"></i>
         </div>
 
         <button type="submit" class="btn btn-primary">
@@ -197,5 +211,37 @@
 
   <!-- JavaScript -->
   <script src="js/app-backend.js"></script>
+  <script>
+    // Password visibility toggles
+    document.getElementById('toggleRegPassword').addEventListener('click', function() {
+      const passwordInput = document.getElementById('regPassword');
+      const icon = this;
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+
+    document.getElementById('toggleRegConfirm').addEventListener('click', function() {
+      const passwordInput = document.getElementById('regConfirm');
+      const icon = this;
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+  </script>
 </body>
 </html>

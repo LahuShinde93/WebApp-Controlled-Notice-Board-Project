@@ -308,6 +308,8 @@
   <!-- JavaScript -->
   <script src="js/app-backend.js"></script>
   <script>
+    let allNotices = []; // Store all notices for filtering
+
     // ── Populate filter dropdowns ──
     document.addEventListener('DOMContentLoaded', async () => {
       const filterCat = document.getElementById('filterCategory');
@@ -326,22 +328,45 @@
           console.error('Failed to load categories:', error);
         }
       }
-      updateEntryCount();
+      
+      // Load all notices initially
+      await loadAllNotices();
     });
 
-    function updateEntryCount() {
+    // Load all notices from backend
+    async function loadAllNotices() {
+      try {
+        const response = await apiCall('/notices');
+        if (response.status === 'SUCCESS') {
+          allNotices = response.data;
+          applyFilters();
+        }
+      } catch (error) {
+        console.error('Failed to load notices:', error);
+        const tableBody = document.getElementById('noticesTableBody');
+        if (tableBody) {
+          tableBody.innerHTML = `
+            <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--error);">
+              <i class="fas fa-exclamation-triangle" style="font-size:2rem;display:block;margin-bottom:10px;"></i>
+              Failed to load notices
+            </td></tr>`;
+        }
+      }
+    }
+
+    function updateEntryCount(count) {
       const el = document.getElementById('entryCount');
-      const body = document.getElementById('noticesTableBody');
-      if (el && body) {
-        const count = body.querySelectorAll('tr').length;
+      if (el) {
         el.textContent = `There are ${count} entries`;
-        const showEl = document.getElementById('showingText');
-        if (showEl) showEl.textContent = `Showing 1 to ${count} of ${count} entries`;
+      }
+      const showEl = document.getElementById('showingText');
+      if (showEl) {
+        showEl.textContent = `Showing 1 to ${count} of ${count} entries`;
       }
     }
 
     // ── Combined filter function ──
-    async function applyFilters() {
+    function applyFilters() {
       const search   = (document.getElementById('searchNotices').value || '').toLowerCase();
       const catFilter = document.getElementById('filterCategory').value;
       const priFilter = document.getElementById('filterPriority').value;
@@ -350,59 +375,57 @@
       const tableBody = document.getElementById('noticesTableBody');
       if (!tableBody) return;
 
-      try {
-        const response = await apiCall('/notices');
-        if (response.status === 'SUCCESS') {
-          let notices = response.data;
+      let notices = [...allNotices]; // Create a copy
 
-          if (search) {
-            notices = notices.filter(n =>
-              n.title.toLowerCase().includes(search) ||
-              n.category.toLowerCase().includes(search)
-            );
-          }
-          if (catFilter) notices = notices.filter(n => n.category === catFilter);
-          if (priFilter) notices = notices.filter(n => n.priority === priFilter);
-          if (staFilter) notices = notices.filter(n => n.status === staFilter);
+      // Apply filters
+      if (search) {
+        notices = notices.filter(n =>
+          n.title.toLowerCase().includes(search) ||
+          n.category.toLowerCase().includes(search) ||
+          n.description.toLowerCase().includes(search)
+        );
+      }
+      if (catFilter) {
+        notices = notices.filter(n => n.category === catFilter);
+      }
+      if (priFilter) {
+        notices = notices.filter(n => n.priority === priFilter);
+      }
+      if (staFilter) {
+        notices = notices.filter(n => n.status === staFilter);
+      }
 
-          if (notices.length === 0) {
-            tableBody.innerHTML = `
-              <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--gray-400);">
-                <i class="fas fa-inbox" style="font-size:2rem;display:block;margin-bottom:10px;"></i>
-                No notices found
-              </td></tr>`;
-          } else {
-            tableBody.innerHTML = notices.map(n => `
-              <tr>
-                <td><strong>${n.title}</strong></td>
-                <td>${n.category}</td>
-                <td><span class="badge badge-${n.priority.toLowerCase()}">${n.priority}</span></td>
-                <td>${n.createdAt ? new Date(n.createdAt).toLocaleDateString() : 'N/A'}</td>
-                <td><span class="badge badge-${n.status.toLowerCase()}">${n.status}</span></td>
-                <td>
-                  <div class="table-actions">
-                    <button class="btn-icon edit" onclick="editNotice('${n.id}')" title="Edit"><i class="fas fa-pen"></i></button>
-                    <button class="btn-icon delete" onclick="deleteNotice('${n.id}')" title="Delete"><i class="fas fa-trash"></i></button>
-                  </div>
-                </td>
-              </tr>
-            `).join('');
-          }
-
-          // Update counts
-          const el = document.getElementById('entryCount');
-          if (el) el.textContent = `There are ${notices.length} entries`;
-          const showEl = document.getElementById('showingText');
-          if (showEl) showEl.textContent = `Showing 1 to ${notices.length} of ${notices.length} entries`;
-        }
-      } catch (error) {
-        console.error('Failed to load notices:', error);
+      // Render filtered results
+      if (notices.length === 0) {
+        tableBody.innerHTML = `
+          <tr><td colspan="6" style="text-align:center;padding:40px;color:var(--gray-400);">
+            <i class="fas fa-inbox" style="font-size:2rem;display:block;margin-bottom:10px;"></i>
+            No notices found
+          </td></tr>`;
+        updateEntryCount(0);
+      } else {
+        tableBody.innerHTML = notices.map((n, i) => `
+          <tr class="fade-in fade-in-delay-${(i % 4) + 1}">
+            <td><strong>${n.title}</strong></td>
+            <td>${n.category}</td>
+            <td><span class="badge badge-${n.priority.toLowerCase()}">${n.priority}</span></td>
+            <td>${n.createdAt ? new Date(n.createdAt).toLocaleDateString() : 'N/A'}</td>
+            <td><span class="badge badge-${n.status.toLowerCase()}">${n.status}</span></td>
+            <td>
+              <div class="table-actions">
+                <button class="btn-icon edit" onclick="editNotice('${n.id}')" title="Edit"><i class="fas fa-pen"></i></button>
+                <button class="btn-icon delete" onclick="deleteNotice('${n.id}')" title="Delete"><i class="fas fa-trash"></i></button>
+              </div>
+            </td>
+          </tr>
+        `).join('');
+        updateEntryCount(notices.length);
       }
     }
 
     // ── Sort ──
     let currentSort = { field: '', asc: true };
-    async function sortTable(field) {
+    function sortTable(field) {
       if (currentSort.field === field) {
         currentSort.asc = !currentSort.asc;
       } else {
@@ -410,22 +433,119 @@
         currentSort.asc = true;
       }
       
+      allNotices.sort((a, b) => {
+        let valA = a[field];
+        let valB = b[field];
+        
+        // Handle date sorting
+        if (field === 'date' || field === 'createdAt') {
+          valA = new Date(valA || 0).getTime();
+          valB = new Date(valB || 0).getTime();
+        } else {
+          valA = (valA || '').toString().toLowerCase();
+          valB = (valB || '').toString().toLowerCase();
+        }
+        
+        if (valA < valB) return currentSort.asc ? -1 : 1;
+        if (valA > valB) return currentSort.asc ? 1 : -1;
+        return 0;
+      });
+      
+      applyFilters();
+    }
+
+    // Override the global deleteNotice to reload after delete
+    const originalDeleteNotice = window.deleteNotice;
+    window.deleteNotice = async function(id) {
+      const notice = allNotices.find(n => n.id === id);
+      if (!notice) return;
+      
+      showConfirmDialog({
+        title: 'Delete Notice?',
+        message: `Are you sure you want to delete <strong>"${notice.title}"</strong>? This action cannot be undone.`,
+        confirmText: 'Yes, Delete',
+        cancelText: 'Cancel',
+        type: 'danger',
+        onConfirm: async () => {
+          try {
+            await apiCall(`/notices/${id}`, 'DELETE');
+            showToast('Notice deleted successfully!', 'success');
+            await loadAllNotices(); // Reload all notices
+          } catch (error) {
+            // Error already shown by apiCall
+          }
+        }
+      });
+    };
+
+    // Override editNotice to reload after edit
+    const originalEditNotice = window.editNotice;
+    window.editNotice = async function(id) {
       try {
-        const response = await apiCall('/notices');
+        const response = await apiCall(`/notices/${id}`);
         if (response.status === 'SUCCESS') {
-          response.data.sort((a, b) => {
-            const valA = (a[field] || '').toString().toLowerCase();
-            const valB = (b[field] || '').toString().toLowerCase();
-            if (valA < valB) return currentSort.asc ? -1 : 1;
-            if (valA > valB) return currentSort.asc ? 1 : -1;
-            return 0;
-          });
-          await applyFilters();
+          const notice = response.data;
+          
+          document.getElementById('editNoticeId').value = notice.id;
+          document.getElementById('editNoticeTitle').value = notice.title;
+          document.getElementById('editNoticeDescription').value = notice.description;
+          document.getElementById('editNoticePriority').value = notice.priority;
+          document.getElementById('editNoticeStatus').value = notice.status;
+
+          // Populate category dropdown
+          const catSelect = document.getElementById('editNoticeCategory');
+          const catResponse = await apiCall('/categories');
+          if (catResponse.status === 'SUCCESS') {
+            catSelect.innerHTML = '<option value="">Select Category</option>';
+            catResponse.data.forEach(cat => {
+              const opt = document.createElement('option');
+              opt.value = cat.name;
+              opt.textContent = cat.name;
+              if (cat.name === notice.category) opt.selected = true;
+              catSelect.appendChild(opt);
+            });
+          }
+
+          document.getElementById('editModal').classList.add('active');
         }
       } catch (error) {
-        console.error('Failed to sort:', error);
+        showToast('Failed to load notice', 'error');
       }
-    }
+    };
+
+    // Override form submit to reload after edit
+    document.addEventListener('DOMContentLoaded', () => {
+      const form = document.getElementById('editNoticeForm');
+      if (form) {
+        form.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const id = document.getElementById('editNoticeId').value;
+          const title = document.getElementById('editNoticeTitle').value.trim();
+          const description = document.getElementById('editNoticeDescription').value.trim();
+          const category = document.getElementById('editNoticeCategory').value;
+          const priority = document.getElementById('editNoticePriority').value;
+          const status = document.getElementById('editNoticeStatus').value;
+
+          try {
+            const response = await apiCall(`/notices/${id}`, 'PUT', {
+              title,
+              description,
+              category,
+              priority,
+              status
+            });
+            
+            if (response.status === 'SUCCESS') {
+              showToast('Notice updated successfully!', 'success');
+              closeEditModal();
+              await loadAllNotices(); // Reload all notices
+            }
+          } catch (error) {
+            // Error already shown by apiCall
+          }
+        });
+      }
+    });
   </script>
 </body>
 </html>

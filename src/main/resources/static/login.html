@@ -99,6 +99,20 @@
       color: var(--gray-400);
       font-size: 0.9rem;
     }
+
+    .auth-panel .input-wrapper .toggle-password {
+      position: absolute;
+      right: 14px;
+      top: 42px;
+      color: var(--gray-500);
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: color 0.3s;
+    }
+
+    .auth-panel .input-wrapper .toggle-password:hover {
+      color: var(--primary-600);
+    }
     
     .auth-panel .btn-primary {
       width: 100%;
@@ -202,7 +216,7 @@
         <div class="input-wrapper">
           <label for="loginPassword">Password</label>
           <input type="password" id="loginPassword" placeholder="Enter your password" required>
-          <i class="fas fa-lock field-icon"></i>
+          <i class="fas fa-eye toggle-password" id="toggleLoginPassword"></i>
         </div>
 
         <div class="form-check">
@@ -231,5 +245,22 @@
 
   <!-- JavaScript -->
   <script src="js/app-backend.js"></script>
+  <script>
+    // Password visibility toggle
+    document.getElementById('toggleLoginPassword').addEventListener('click', function() {
+      const passwordInput = document.getElementById('loginPassword');
+      const icon = this;
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+  </script>
 </body>
 </html>
