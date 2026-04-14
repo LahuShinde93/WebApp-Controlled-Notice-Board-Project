@@ -161,15 +161,5 @@
 
   <!-- JavaScript -->
   <script src="js/app-backend.js"></script>
-  <script>
-    // Check authentication on page load
-    document.addEventListener('DOMContentLoaded', () => {
-      const user = getCurrentUser();
-      if (!user) {
-        // Not logged in, redirect to login
-        window.location.href = 'login.html';
-      }
-    });
-  </script>
 </body>
 </html>

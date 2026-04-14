@@ -301,8 +301,12 @@ async function initDashboard() {
   const totalEl = document.getElementById('totalNotices');
   if (!totalEl) return;
 
-  // Check if user is authenticated
-  if (!checkAuth()) return;
+  // Check if user is authenticated - redirect to login if not
+  const user = getCurrentUser();
+  if (!user) {
+    window.location.href = 'login.html';
+    return;
+  }
 
   try {
     const response = await apiCall('/dashboard/stats');
