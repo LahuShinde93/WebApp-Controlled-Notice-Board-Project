@@ -386,10 +386,11 @@ async function renderRecentNotices() {
 //   CREATE NOTICE PAGE
 // ============================================
 async function initCreateNotice() {
+  // Check if we're on the create notice page FIRST
   const form = document.getElementById('createNoticeForm');
-  if (!form) return;
+  if (!form) return; // Not on this page, exit silently
 
-  // Check if user is authenticated
+  // Now check authentication
   if (!checkAuth()) return;
 
   // Redirect students to dashboard
@@ -473,10 +474,11 @@ async function initCreateNotice() {
 //   MANAGE NOTICES PAGE
 // ============================================
 async function initManageNotices() {
+  // Check if we're on the manage notices page FIRST
   const tableBody = document.getElementById('noticesTableBody');
-  if (!tableBody) return;
+  if (!tableBody) return; // Not on this page, exit silently
 
-  // Check if user is authenticated
+  // Now check authentication
   if (!checkAuth()) return;
 
   // Redirect students to dashboard
@@ -656,7 +658,11 @@ function initEditModal() {
 //   CATEGORIES PAGE
 // ============================================
 async function initCategories() {
-  // Check if user is authenticated
+  // Check if we're on the categories page FIRST
+  const categoryList = document.getElementById('categoryList');
+  if (!categoryList) return; // Not on this page, exit silently
+
+  // Now check authentication
   if (!checkAuth()) return;
 
   // Redirect students to dashboard
