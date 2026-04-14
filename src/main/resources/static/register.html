@@ -85,8 +85,20 @@
       font-size: 0.95rem;
       transition: all 0.3s;
     }
+
+    .auth-panel .input-wrapper select {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid var(--gray-200);
+      border-radius: 8px;
+      font-size: 0.95rem;
+      transition: all 0.3s;
+      background: white;
+      cursor: pointer;
+    }
     
-    .auth-panel .input-wrapper input:focus {
+    .auth-panel .input-wrapper input:focus,
+    .auth-panel .input-wrapper select:focus {
       border-color: var(--primary-500);
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       outline: none;
@@ -183,6 +195,15 @@
           <label for="regEmail">Email Address</label>
           <input type="email" id="regEmail" placeholder="Enter your email" required>
           <i class="fas fa-envelope field-icon"></i>
+        </div>
+
+        <div class="input-wrapper">
+          <label for="regRole">Role</label>
+          <select id="regRole" required>
+            <option value="">Select Role</option>
+            <option value="ADMIN">Admin</option>
+            <option value="STUDENT">Student</option>
+          </select>
         </div>
 
         <div class="input-wrapper">

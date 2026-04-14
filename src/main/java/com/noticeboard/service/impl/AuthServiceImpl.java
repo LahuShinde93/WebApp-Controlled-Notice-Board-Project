@@ -33,17 +33,23 @@ public class AuthServiceImpl implements AuthService {
             throw new ResourceAlreadyExistsException("User with email " + request.getEmail() + " already exists");
         }
         
+        // Validate role
+        String role = request.getRole();
+        if (role == null || (!role.equals("ADMIN") && !role.equals("STUDENT"))) {
+            role = "STUDENT"; // Default to STUDENT if invalid
+        }
+        
         User user = new User();
         user.setName(request.getName());
         user.setEmail(request.getEmail());
         user.setPassword(request.getPassword()); // Store password as-is (not recommended for production)
-        user.setRole("ADMIN");
+        user.setRole(role);
         user.setCreatedAt(LocalDateTime.now());
         user.setUpdatedAt(LocalDateTime.now());
         
         User savedUser = userDao.save(user);
         
-        log.info("User registered successfully: {}", savedUser.getEmail());
+        log.info("User registered successfully: {} with role: {}", savedUser.getEmail(), savedUser.getRole());
         return new AuthResponse(savedUser.getEmail(), savedUser.getName(), savedUser.getRole());
     }
     

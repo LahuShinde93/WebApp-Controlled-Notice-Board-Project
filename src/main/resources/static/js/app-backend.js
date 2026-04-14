@@ -172,6 +172,85 @@ function initLoginPage() {
 }
 
 // ============================================
+//   ROLE-BASED ACCESS CONTROL
+// ============================================
+function getCurrentUser() {
+  const userStr = localStorage.getItem('user');
+  return userStr ? JSON.parse(userStr) : null;
+}
+
+function isAdmin() {
+  const user = getCurrentUser();
+  return user && user.role === 'ADMIN';
+}
+
+function isStudent() {
+  const user = getCurrentUser();
+  return user && user.role === 'STUDENT';
+}
+
+function checkAuth() {
+  const user = getCurrentUser();
+  if (!user) {
+    window.location.href = 'login.html';
+    return false;
+  }
+  return true;
+}
+
+function updateUIBasedOnRole() {
+  const user = getCurrentUser();
+  if (!user) return;
+
+  // Update navbar welcome message
+  const welcomeEl = document.querySelector('.navbar-welcome strong');
+  if (welcomeEl) {
+    welcomeEl.textContent = user.name;
+  }
+
+  // Update profile avatar
+  const avatarEl = document.querySelector('.profile-avatar');
+  if (avatarEl) {
+    avatarEl.textContent = user.name.charAt(0).toUpperCase();
+    avatarEl.title = `${user.name} (${user.role})`;
+  }
+
+  // Hide admin-only features for students
+  if (isStudent()) {
+    // Hide create notice link
+    const createNoticeLink = document.getElementById('navCreateNotice');
+    if (createNoticeLink) createNoticeLink.style.display = 'none';
+
+    // Hide manage notices link
+    const manageNoticesLink = document.getElementById('navManageNotices');
+    if (manageNoticesLink) manageNoticesLink.style.display = 'none';
+
+    // Hide categories link
+    const categoriesLink = document.getElementById('navCategories');
+    if (categoriesLink) categoriesLink.style.display = 'none';
+
+    // Hide add buttons
+    const addButtons = document.querySelectorAll('.btn-success, .btn-primary[id*="add"], .btn-primary[id*="Add"]');
+    addButtons.forEach(btn => btn.style.display = 'none');
+
+    // Hide edit/delete buttons
+    const editButtons = document.querySelectorAll('.btn-icon.edit, .btn-icon.delete, .table-actions');
+    editButtons.forEach(btn => btn.style.display = 'none');
+
+    // Show read-only message
+    const pageHeader = document.querySelector('.page-header h2');
+    if (pageHeader && window.location.pathname.includes('index.html')) {
+      const badge = document.createElement('span');
+      badge.className = 'badge badge-info';
+      badge.style.marginLeft = '10px';
+      badge.style.fontSize = '0.7em';
+      badge.textContent = 'View Only';
+      pageHeader.appendChild(badge);
+    }
+  }
+}
+
+// ============================================
 //   REGISTRATION PAGE
 // ============================================
 function initRegisterPage() {
@@ -182,11 +261,16 @@ function initRegisterPage() {
     e.preventDefault();
     const name = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim();
+    const role = document.getElementById('regRole') ? document.getElementById('regRole').value : 'STUDENT';
     const password = document.getElementById('regPassword').value.trim();
     const confirm = document.getElementById('regConfirm').value.trim();
 
     if (!name || !email || !password || !confirm) {
       showToast('Please fill in all fields.', 'error');
+      return;
+    }
+    if (!role) {
+      showToast('Please select a role.', 'error');
       return;
     }
     if (password !== confirm) {
@@ -199,7 +283,7 @@ function initRegisterPage() {
     }
 
     try {
-      const response = await apiCall('/auth/register', 'POST', { name, email, password });
+      const response = await apiCall('/auth/register', 'POST', { name, email, password, role });
       if (response.status === 'SUCCESS') {
         showToast('Registration successful! Please login to continue.', 'success');
         setTimeout(() => window.location.href = 'login.html', 1500);
@@ -228,6 +312,24 @@ async function initDashboard() {
     }
     
     await renderRecentNotices();
+    
+    // Hide quick actions for students
+    if (isStudent()) {
+      const quickActions = document.querySelectorAll('#quickCreate, #quickManage, #quickCategories');
+      quickActions.forEach(action => {
+        if (action) action.style.display = 'none';
+      });
+      
+      // Update welcome message
+      const welcomeText = document.querySelector('.welcome-text h2');
+      if (welcomeText) {
+        welcomeText.textContent = 'Welcome to the Notice Board!';
+      }
+      const welcomeSubtext = document.querySelector('.welcome-text p');
+      if (welcomeSubtext) {
+        welcomeSubtext.textContent = 'View all active notices and announcements.';
+      }
+    }
   } catch (error) {
     console.error('Failed to load dashboard:', error);
   }
@@ -272,6 +374,13 @@ async function renderRecentNotices() {
 async function initCreateNotice() {
   const form = document.getElementById('createNoticeForm');
   if (!form) return;
+
+  // Redirect students to dashboard
+  if (isStudent()) {
+    showToast('Access denied. Only admins can create notices.', 'error');
+    setTimeout(() => window.location.href = 'index.html', 1500);
+    return;
+  }
 
   // Populate category dropdown
   const catSelect = document.getElementById('noticeCategory');
@@ -349,6 +458,13 @@ async function initCreateNotice() {
 async function initManageNotices() {
   const tableBody = document.getElementById('noticesTableBody');
   if (!tableBody) return;
+
+  // Redirect students to dashboard
+  if (isStudent()) {
+    showToast('Access denied. Only admins can manage notices.', 'error');
+    setTimeout(() => window.location.href = 'index.html', 1500);
+    return;
+  }
 
   await renderNoticesTable();
 
@@ -520,6 +636,13 @@ function initEditModal() {
 //   CATEGORIES PAGE
 // ============================================
 async function initCategories() {
+  // Redirect students to dashboard
+  if (isStudent()) {
+    showToast('Access denied. Only admins can manage categories.', 'error');
+    setTimeout(() => window.location.href = 'index.html', 1500);
+    return;
+  }
+
   await renderCategories();
 
   const addForm = document.getElementById('addCategoryForm');
@@ -665,6 +788,7 @@ function logout() {
 document.addEventListener('DOMContentLoaded', () => {
   initSidebar();
   setActiveSidebarLink();
+  updateUIBasedOnRole(); // Apply role-based UI changes
   initLoginPage();
   initRegisterPage();
   initDashboard();
