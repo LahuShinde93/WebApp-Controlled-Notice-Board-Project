@@ -3,21 +3,13 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Login to Smart Notice Board Admin Dashboard">
-  <title>Login — Smart Notice Board</title>
+  <title>Login - Smart Notice Board</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="css/styles.css">
   <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
-    }
-
-    html, body {
-      height: 100%;
-      width: 100%;
-      overflow-x: hidden;
     }
 
     body {
@@ -27,13 +19,12 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
     }
     
     .auth-container {
       width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
+      max-width: 450px;
     }
     
     .auth-header {
@@ -45,10 +36,6 @@
     .auth-header h1 {
       font-size: 2rem;
       margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 15px;
       font-weight: 700;
     }
     
@@ -58,10 +45,10 @@
     }
     
     .auth-panel {
-      background: #fff;
+      background: white;
       border-radius: 12px;
       box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-      padding: 40px 36px;
+      padding: 40px;
     }
     
     .auth-panel h2 {
@@ -72,19 +59,18 @@
       text-align: center;
     }
     
-    .auth-panel .auth-subtitle {
+    .auth-subtitle {
       font-size: 0.95rem;
       color: #718096;
-      margin-bottom: 32px;
+      margin-bottom: 30px;
       text-align: center;
     }
     
-    .auth-panel .input-wrapper {
-      position: relative;
+    .form-group {
       margin-bottom: 20px;
     }
     
-    .auth-panel .input-wrapper label {
+    .form-group label {
       display: block;
       margin-bottom: 8px;
       color: #4a5568;
@@ -92,68 +78,32 @@
       font-size: 0.9rem;
     }
     
-    .auth-panel .input-wrapper input {
+    .input-wrapper {
+      position: relative;
+    }
+    
+    .input-wrapper input {
       width: 100%;
       padding: 12px 40px 12px 12px;
       border: 2px solid #e2e8f0;
       border-radius: 8px;
       font-size: 0.95rem;
       transition: all 0.3s;
-      background: white;
     }
     
-    .auth-panel .input-wrapper input:focus {
+    .input-wrapper input:focus {
       border-color: #667eea;
-      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
     }
     
-    .auth-panel .input-wrapper .field-icon {
+    .input-wrapper .icon {
       position: absolute;
       right: 14px;
-      top: 42px;
+      top: 50%;
+      transform: translateY(-50%);
       color: #cbd5e0;
-      font-size: 0.9rem;
-      pointer-events: none;
-    }
-
-    .auth-panel .input-wrapper .toggle-password {
-      position: absolute;
-      right: 14px;
-      top: 42px;
-      color: #718096;
-      font-size: 0.9rem;
       cursor: pointer;
-      transition: color 0.3s;
-      z-index: 10;
-    }
-
-    .auth-panel .input-wrapper .toggle-password:hover {
-      color: #667eea;
-    }
-    
-    .auth-panel .btn-primary {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      padding: 13px;
-      font-size: 0.95rem;
-      margin-top: 10px;
-      background: #667eea;
-      border: none;
-      border-radius: 8px;
-      color: white;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.3s;
-    }
-    
-    .auth-panel .btn-primary:hover {
-      background: #5568d3;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
     }
     
     .form-check {
@@ -163,7 +113,7 @@
       margin: 15px 0;
     }
     
-    .form-check input[type="checkbox"] {
+    .form-check input {
       width: 18px;
       height: 18px;
       cursor: pointer;
@@ -173,50 +123,88 @@
       font-size: 0.9rem;
       color: #718096;
       cursor: pointer;
-      user-select: none;
     }
     
-    .demo-credentials {
+    .btn-primary {
+      width: 100%;
+      padding: 13px;
+      background: #667eea;
+      border: none;
+      border-radius: 8px;
+      color: white;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.3s;
+      margin-top: 10px;
+    }
+    
+    .btn-primary:hover {
+      background: #5568d3;
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+    }
+    
+    .demo-info {
       margin-top: 20px;
       padding: 12px;
       background: #ebf4ff;
       border-radius: 8px;
       text-align: center;
-    }
-    
-    .demo-credentials p {
       font-size: 0.85rem;
       color: #3182ce;
-      font-weight: 500;
-      margin: 0;
     }
-
+    
     .auth-footer {
       margin-top: 24px;
       text-align: center;
       font-size: 0.9rem;
       color: #718096;
     }
-
+    
     .auth-footer a {
       color: #667eea;
       font-weight: 600;
       text-decoration: none;
-      transition: color 0.3s;
     }
-
+    
     .auth-footer a:hover {
-      color: #5568d3;
       text-decoration: underline;
     }
 
-    @media (max-width: 640px) {
-      .auth-header h1 {
-        font-size: 1.5rem;
+    .toast {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 15px 20px;
+      background: white;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: none;
+      z-index: 1000;
+    }
+
+    .toast.show {
+      display: block;
+      animation: slideIn 0.3s ease;
+    }
+
+    .toast.error {
+      border-left: 4px solid #f56565;
+    }
+
+    .toast.success {
+      border-left: 4px solid #48bb78;
+    }
+
+    @keyframes slideIn {
+      from {
+        transform: translateX(100%);
+        opacity: 0;
       }
-      
-      .auth-panel {
-        padding: 30px 24px;
+      to {
+        transform: translateX(0);
+        opacity: 1;
       }
     }
   </style>
@@ -224,7 +212,6 @@
 <body>
 
   <div class="auth-container">
-    <!-- Header -->
     <div class="auth-header">
       <h1>
         <i class="fas fa-clipboard-list"></i>
@@ -233,69 +220,115 @@
       <p>Manage your college notices efficiently</p>
     </div>
 
-    <!-- Login Panel -->
     <div class="auth-panel">
       <h2>Welcome Back</h2>
       <p class="auth-subtitle">Login to access your dashboard</p>
 
-      <form id="loginForm" autocomplete="off">
-        <div class="input-wrapper">
-          <label for="loginEmail">Email Address</label>
-          <input type="email" id="loginEmail" placeholder="Enter your email" required>
-          <i class="fas fa-envelope field-icon"></i>
+      <form id="loginForm">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <div class="input-wrapper">
+            <input type="email" id="email" placeholder="Enter your email" required>
+            <i class="fas fa-envelope icon"></i>
+          </div>
         </div>
 
-        <div class="input-wrapper">
-          <label for="loginPassword">Password</label>
-          <input type="password" id="loginPassword" placeholder="Enter your password" required>
-          <i class="fas fa-eye toggle-password" id="toggleLoginPassword"></i>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="password" placeholder="Enter your password" required>
+            <i class="fas fa-eye icon" id="togglePassword"></i>
+          </div>
         </div>
 
         <div class="form-check">
-          <input type="checkbox" id="rememberMe" checked>
-          <label for="rememberMe">Remember me</label>
+          <input type="checkbox" id="remember" checked>
+          <label for="remember">Remember me</label>
         </div>
 
-        <button type="submit" class="btn btn-primary">
+        <button type="submit" class="btn-primary">
           <i class="fas fa-sign-in-alt"></i> Login
         </button>
       </form>
 
-      <!-- Demo credentials -->
-      <div class="demo-credentials">
-        <p>
-          <i class="fas fa-info-circle"></i> Demo: admin@noticeboard.com / admin123
-        </p>
+      <div class="demo-info">
+        <i class="fas fa-info-circle"></i> Demo: admin@noticeboard.com / admin123
       </div>
 
-      <!-- Registration Link -->
       <div class="auth-footer">
         Don't have an account? <a href="register.html">Create new account</a>
       </div>
     </div>
   </div>
 
-  <!-- JavaScript -->
-  <script src="js/app-backend.js"></script>
+  <div id="toast" class="toast"></div>
+
   <script>
-    // Password visibility toggle
-    const toggleBtn = document.getElementById('toggleLoginPassword');
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', function() {
-        const passwordInput = document.getElementById('loginPassword');
-        const icon = this;
-        
-        if (passwordInput.type === 'password') {
-          passwordInput.type = 'text';
-          icon.classList.remove('fa-eye');
-          icon.classList.add('fa-eye-slash');
-        } else {
-          passwordInput.type = 'password';
-          icon.classList.remove('fa-eye-slash');
-          icon.classList.add('fa-eye');
-        }
-      });
+    const API_BASE_URL = 'http://localhost:8080/api';
+
+    // Toast notification
+    function showToast(message, type = 'success') {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.className = `toast ${type} show`;
+      setTimeout(() => {
+        toast.className = 'toast';
+      }, 3000);
     }
+
+    // Password toggle
+    document.getElementById('togglePassword').addEventListener('click', function() {
+      const passwordInput = document.getElementById('password');
+      const icon = this;
+      
+      if (passwordInput.type === 'password') {
+        passwordInput.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
+      } else {
+        passwordInput.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
+      }
+    });
+
+    // Login form submission
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+
+      if (!email || !password) {
+        showToast('Please fill in all fields', 'error');
+        return;
+      }
+
+      try {
+        const response = await fetch(`${API_BASE_URL}/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({ email, password })
+        });
+
+        const data = await response.json();
+
+        if (response.ok && data.status === 'SUCCESS') {
+          localStorage.setItem('user', JSON.stringify(data.data));
+          showToast('Login successful! Redirecting...', 'success');
+          setTimeout(() => {
+            window.location.href = 'dashboard.html';
+          }, 1000);
+        } else {
+          showToast(data.message || 'Invalid email or password', 'error');
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        showToast('Login failed. Please try again.', 'error');
+      }
+    });
   </script>
 </body>
 </html>
