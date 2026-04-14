@@ -8,6 +8,18 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="css/styles.css">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      width: 100%;
+      overflow-x: hidden;
+    }
+
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
@@ -15,11 +27,13 @@
       align-items: center;
       justify-content: center;
       padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     }
     
     .auth-container {
       width: 100%;
       max-width: 480px;
+      margin: 0 auto;
     }
     
     .auth-header {
@@ -29,16 +43,17 @@
     }
     
     .auth-header h1 {
-      font-size: 2.5rem;
+      font-size: 2rem;
       margin-bottom: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 15px;
+      font-weight: 700;
     }
     
     .auth-header p {
-      font-size: 1.1rem;
+      font-size: 1rem;
       opacity: 0.9;
     }
     
@@ -52,14 +67,14 @@
     .auth-panel h2 {
       font-size: 1.75rem;
       font-weight: 700;
-      color: var(--gray-900);
+      color: #1a202c;
       margin-bottom: 8px;
       text-align: center;
     }
     
     .auth-panel .auth-subtitle {
       font-size: 0.95rem;
-      color: var(--gray-500);
+      color: #718096;
       margin-bottom: 32px;
       text-align: center;
     }
@@ -72,7 +87,7 @@
     .auth-panel .input-wrapper label {
       display: block;
       margin-bottom: 8px;
-      color: var(--gray-700);
+      color: #4a5568;
       font-weight: 500;
       font-size: 0.9rem;
     }
@@ -80,14 +95,15 @@
     .auth-panel .input-wrapper input {
       width: 100%;
       padding: 12px 40px 12px 12px;
-      border: 2px solid var(--gray-200);
+      border: 2px solid #e2e8f0;
       border-radius: 8px;
       font-size: 0.95rem;
       transition: all 0.3s;
+      background: white;
     }
     
     .auth-panel .input-wrapper input:focus {
-      border-color: var(--primary-500);
+      border-color: #667eea;
       box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
       outline: none;
     }
@@ -96,31 +112,36 @@
       position: absolute;
       right: 14px;
       top: 42px;
-      color: var(--gray-400);
+      color: #cbd5e0;
       font-size: 0.9rem;
+      pointer-events: none;
     }
 
     .auth-panel .input-wrapper .toggle-password {
       position: absolute;
       right: 14px;
       top: 42px;
-      color: var(--gray-500);
+      color: #718096;
       font-size: 0.9rem;
       cursor: pointer;
       transition: color 0.3s;
+      z-index: 10;
     }
 
     .auth-panel .input-wrapper .toggle-password:hover {
-      color: var(--primary-600);
+      color: #667eea;
     }
     
     .auth-panel .btn-primary {
       width: 100%;
+      display: flex;
+      align-items: center;
       justify-content: center;
+      gap: 8px;
       padding: 13px;
       font-size: 0.95rem;
       margin-top: 10px;
-      background: var(--primary-600);
+      background: #667eea;
       border: none;
       border-radius: 8px;
       color: white;
@@ -130,7 +151,7 @@
     }
     
     .auth-panel .btn-primary:hover {
-      background: var(--primary-700);
+      background: #5568d3;
       transform: translateY(-2px);
       box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
     }
@@ -150,21 +171,22 @@
     
     .form-check label {
       font-size: 0.9rem;
-      color: var(--gray-600);
+      color: #718096;
       cursor: pointer;
+      user-select: none;
     }
     
     .demo-credentials {
       margin-top: 20px;
       padding: 12px;
-      background: var(--primary-50);
+      background: #ebf4ff;
       border-radius: 8px;
       text-align: center;
     }
     
     .demo-credentials p {
       font-size: 0.85rem;
-      color: var(--primary-700);
+      color: #3182ce;
       font-weight: 500;
       margin: 0;
     }
@@ -173,19 +195,29 @@
       margin-top: 24px;
       text-align: center;
       font-size: 0.9rem;
-      color: var(--gray-600);
+      color: #718096;
     }
 
     .auth-footer a {
-      color: var(--primary-600);
+      color: #667eea;
       font-weight: 600;
       text-decoration: none;
       transition: color 0.3s;
     }
 
     .auth-footer a:hover {
-      color: var(--primary-700);
+      color: #5568d3;
       text-decoration: underline;
+    }
+
+    @media (max-width: 640px) {
+      .auth-header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .auth-panel {
+        padding: 30px 24px;
+      }
     }
   </style>
 </head>
@@ -247,20 +279,23 @@
   <script src="js/app-backend.js"></script>
   <script>
     // Password visibility toggle
-    document.getElementById('toggleLoginPassword').addEventListener('click', function() {
-      const passwordInput = document.getElementById('loginPassword');
-      const icon = this;
-      
-      if (passwordInput.type === 'password') {
-        passwordInput.type = 'text';
-        icon.classList.remove('fa-eye');
-        icon.classList.add('fa-eye-slash');
-      } else {
-        passwordInput.type = 'password';
-        icon.classList.remove('fa-eye-slash');
-        icon.classList.add('fa-eye');
-      }
-    });
+    const toggleBtn = document.getElementById('toggleLoginPassword');
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', function() {
+        const passwordInput = document.getElementById('loginPassword');
+        const icon = this;
+        
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          icon.classList.remove('fa-eye');
+          icon.classList.add('fa-eye-slash');
+        } else {
+          passwordInput.type = 'password';
+          icon.classList.remove('fa-eye-slash');
+          icon.classList.add('fa-eye');
+        }
+      });
+    }
   </script>
 </body>
 </html>
