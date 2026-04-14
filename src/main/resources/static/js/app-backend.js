@@ -163,7 +163,7 @@ function initLoginPage() {
       if (response.status === 'SUCCESS') {
         localStorage.setItem('user', JSON.stringify(response.data));
         showToast('Login successful! Redirecting...', 'success');
-        setTimeout(() => window.location.href = 'index.html', 1000);
+        setTimeout(() => window.location.href = 'dashboard.html', 1000);
       }
     } catch (error) {
       showToast('Invalid email or password.', 'error');
@@ -395,7 +395,7 @@ async function initCreateNotice() {
   // Redirect students to dashboard
   if (isStudent()) {
     showToast('Access denied. Only admins can create notices.', 'error');
-    setTimeout(() => window.location.href = 'index.html', 1500);
+    setTimeout(() => window.location.href = 'dashboard.html', 1500);
     return;
   }
 
@@ -482,7 +482,7 @@ async function initManageNotices() {
   // Redirect students to dashboard
   if (isStudent()) {
     showToast('Access denied. Only admins can manage notices.', 'error');
-    setTimeout(() => window.location.href = 'index.html', 1500);
+    setTimeout(() => window.location.href = 'dashboard.html', 1500);
     return;
   }
 
@@ -662,7 +662,7 @@ async function initCategories() {
   // Redirect students to dashboard
   if (isStudent()) {
     showToast('Access denied. Only admins can manage categories.', 'error');
-    setTimeout(() => window.location.href = 'index.html', 1500);
+    setTimeout(() => window.location.href = 'dashboard.html', 1500);
     return;
   }
 
