@@ -202,13 +202,13 @@ function updateUIBasedOnRole() {
   const user = getCurrentUser();
   if (!user) return;
 
-  // Update navbar welcome message
+  // Update navbar welcome message with user's name
   const welcomeEl = document.querySelector('.navbar-welcome strong');
   if (welcomeEl) {
     welcomeEl.textContent = user.name;
   }
 
-  // Update profile avatar
+  // Update profile avatar with first letter of name
   const avatarEl = document.querySelector('.profile-avatar');
   if (avatarEl) {
     avatarEl.textContent = user.name.charAt(0).toUpperCase();
@@ -237,7 +237,7 @@ function updateUIBasedOnRole() {
     const editButtons = document.querySelectorAll('.btn-icon.edit, .btn-icon.delete, .table-actions');
     editButtons.forEach(btn => btn.style.display = 'none');
 
-    // Show read-only message
+    // Show read-only message on dashboard
     const pageHeader = document.querySelector('.page-header h2');
     if (pageHeader && window.location.pathname.includes('index.html')) {
       const badge = document.createElement('span');
@@ -301,6 +301,9 @@ async function initDashboard() {
   const totalEl = document.getElementById('totalNotices');
   if (!totalEl) return;
 
+  // Check if user is authenticated
+  if (!checkAuth()) return;
+
   try {
     const response = await apiCall('/dashboard/stats');
     if (response.status === 'SUCCESS') {
@@ -313,8 +316,9 @@ async function initDashboard() {
     
     await renderRecentNotices();
     
-    // Hide quick actions for students
+    // Customize UI for students
     if (isStudent()) {
+      // Hide quick actions for students
       const quickActions = document.querySelectorAll('#quickCreate, #quickManage, #quickCategories');
       quickActions.forEach(action => {
         if (action) action.style.display = 'none';
@@ -328,6 +332,12 @@ async function initDashboard() {
       const welcomeSubtext = document.querySelector('.welcome-text p');
       if (welcomeSubtext) {
         welcomeSubtext.textContent = 'View all active notices and announcements.';
+      }
+
+      // Hide the entire Quick Actions card
+      const quickActionsCard = document.querySelector('.card:has(#quickCreate)');
+      if (quickActionsCard) {
+        quickActionsCard.style.display = 'none';
       }
     }
   } catch (error) {
@@ -374,6 +384,9 @@ async function renderRecentNotices() {
 async function initCreateNotice() {
   const form = document.getElementById('createNoticeForm');
   if (!form) return;
+
+  // Check if user is authenticated
+  if (!checkAuth()) return;
 
   // Redirect students to dashboard
   if (isStudent()) {
@@ -458,6 +471,9 @@ async function initCreateNotice() {
 async function initManageNotices() {
   const tableBody = document.getElementById('noticesTableBody');
   if (!tableBody) return;
+
+  // Check if user is authenticated
+  if (!checkAuth()) return;
 
   // Redirect students to dashboard
   if (isStudent()) {
@@ -636,6 +652,9 @@ function initEditModal() {
 //   CATEGORIES PAGE
 // ============================================
 async function initCategories() {
+  // Check if user is authenticated
+  if (!checkAuth()) return;
+
   // Redirect students to dashboard
   if (isStudent()) {
     showToast('Access denied. Only admins can manage categories.', 'error');

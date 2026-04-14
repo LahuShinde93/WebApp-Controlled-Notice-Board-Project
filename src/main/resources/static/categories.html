@@ -119,6 +119,9 @@
   <script>
     // Update category page stats
     document.addEventListener('DOMContentLoaded', async () => {
+      // Check authentication first
+      if (!checkAuth()) return;
+
       const catTotal = document.getElementById('catTotalCount');
       const catNotice = document.getElementById('catNoticeCount');
       

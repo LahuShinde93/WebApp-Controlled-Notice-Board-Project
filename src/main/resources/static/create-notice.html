@@ -149,5 +149,11 @@
 
   <!-- JavaScript -->
   <script src="js/app-backend.js"></script>
+  <script>
+    // Check authentication on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      if (!checkAuth()) return;
+    });
+  </script>
 </body>
 </html>
